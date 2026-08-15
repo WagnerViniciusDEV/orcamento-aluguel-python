@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orçamento de Aluguel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Imobiliária R.M</h1>
+    <p>Preencha os dados para gerar seu orçamento.</p>
+
+    <form method="POST">
+        <label for="tipo">Tipo de imóvel:</label>
+        <select id="tipo" name="tipo">
+            <option value="apartamento" {% if resultado and resultado.formulario.get("tipo") == "apartamento" %}selected{% endif %}>
+    Apartamento
+</option>
+
+<option value="casa" {% if resultado and resultado.formulario.get("tipo") == "casa" %}selected{% endif %}>
+    Casa
+</option>
+
+<option value="estudio" {% if resultado and resultado.formulario.get("tipo") == "estudio" %}selected{% endif %}>
+    Estúdio
+</option>
+        </select>
+
+        <br><br>
+        <label for="quartos">Quantidade de quartos:</label>
+        <select id="quartos" name="quartos">
+            <option value="1" {% if resultado and resultado.formulario.get("quartos") == "1" %}selected{% endif %}>
+    1 quarto
+</option>
+
+<option value="2" {% if resultado and resultado.formulario.get("quartos") == "2" %}selected{% endif %}>
+    2 quartos
+</option>
+        </select>
+
+        <br><br>
+        <label for="parcelas">Parcelas do contrato:</label>
+        <select id="parcelas" name="parcelas">
+            <option value="1" {% if resultado and resultado.formulario.get("parcelas") == "1" %}selected{% endif %}>1 vez</option>
+            <option value="2" {% if resultado and resultado.formulario.get("parcelas") == "2" %}selected{% endif %}>2 vezes</option>
+            <option value="3" {% if resultado and resultado.formulario.get("parcelas") == "3" %}selected{% endif %}>3 vezes</option>
+            <option value="4" {% if resultado and resultado.formulario.get("parcelas") == "4" %}selected{% endif %}>4 vezes</option>
+            <option value="5" {% if resultado and resultado.formulario.get("parcelas") == "5" %}selected{% endif %}>5 vezes</option>
+        </select>
+
+        <br><br>
+        <label>
+    <input type="checkbox" name="garagem"
+        {% if resultado and resultado.formulario.get("garagem") == "on" %}checked{% endif %}>
+    Incluir garagem
+</label>
+        <br><br>
+        <label>
+    <input type="checkbox" name="tem_criancas"
+        {% if resultado and resultado.formulario.get("tem_criancas") == "on" %}checked{% endif %}>
+    Possui crianças
+</label>
+        <br><br>
+        <label for="qtd_vagas">Quantidade de vagas do estúdio:</label>
+           <select id="qtd_vagas" name="qtd_vagas">
+    <option value="0" {% if resultado and resultado.formulario.get("qtd_vagas") == "0" %}selected{% endif %}>Sem vagas</option>
+    <option value="2" {% if resultado and resultado.formulario.get("qtd_vagas") == "2" %}selected{% endif %}>2 vagas</option>
+    <option value="3" {% if resultado and resultado.formulario.get("qtd_vagas") == "3" %}selected{% endif %}>3 vagas</option>
+    <option value="4" {% if resultado and resultado.formulario.get("qtd_vagas") == "4" %}selected{% endif %}>4 vagas</option>
+    <option value="5" {% if resultado and resultado.formulario.get("qtd_vagas") == "5" %}selected{% endif %}>5 vagas</option>
+</select>
+
+
+        <br><br>
+        <button type="submit">Calcular orçamento</button>
+    </form>
+
+    {% if resultado %}
+        <hr>
+        <h2>Resultado do orçamento</h2>
+        <p><strong>Imóvel:</strong> {{ resultado.tipo }}</p>
+        <p><strong>Aluguel mensal:</strong> R$ {{ "%.2f"|format(resultado.aluguel) }}</p>
+        <p><strong>Contrato:</strong> R$ {{ "%.2f"|format(resultado.contrato) }}</p>
+        <p>
+            <strong>Parcelamento:</strong>
+            {{ resultado.parcelas }}x de R$ {{ "%.2f"|format(resultado.parcela_contrato) }}
+        </p>
+
+        <form method="POST" action="{{ url_for('baixar_csv') }}">
+            {% for nome, valor in resultado.formulario.items() %}
+                <input type="hidden" name="{{ nome }}" value="{{ valor }}">
+            {% endfor %}
+            <button type="submit">Baixar CSV dos 12 meses</button>
+        </form>
+    {% endif %}
+</body>
+</html>
