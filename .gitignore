@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 .vscode/
 orcamento_12_meses.csv
+*.csv
